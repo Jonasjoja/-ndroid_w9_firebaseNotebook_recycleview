@@ -1,5 +1,6 @@
 package com.example.firebasefirestore_notebook.noteadapter;
 
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,8 +8,10 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.firebasefirestore_notebook.MainActivity;
 import com.example.firebasefirestore_notebook.R;
 import com.example.firebasefirestore_notebook.model.Note;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -86,15 +89,30 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
 
         }
 
-        private void deleteLongClick(@NonNull View itemView) {
+        private void deleteLongClick(@NonNull final View itemView) {
             itemView.setOnLongClickListener(new View.OnLongClickListener() { //Deletes on longclick
                 @Override
                 public boolean onLongClick(View v) {
-                    //int pos = getAdapterPosition();
-                    deleteItem(getAdapterPosition());
-                 return false;
+                    return ShowAlertDialog(itemView); //Refactored into a method
                 }
             });
+        }
+
+        private boolean ShowAlertDialog(@NonNull View itemView) {
+            new AlertDialog.Builder(itemView.getContext()) //Alert dialog, to show a popup when trying to delete
+                    .setIcon(android.R.drawable.ic_dialog_alert) //Sets icon
+                    .setTitle("Are you sure?") //Title of the popup
+                    .setMessage("Confirm deletion") //Message in the popup
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() { //Sets text on "positive" button
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteItem(getAdapterPosition()); //What to do if "positive" button is pressed
+                        }
+                    })
+                    .setNegativeButton("No",null) //Else do nothing
+                    .show(); //To show the alert dialog
+
+            return true; //True to make sure it doesnt assume a shortclick is done too.
         }
 
 

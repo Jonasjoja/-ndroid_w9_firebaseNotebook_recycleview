@@ -73,10 +73,18 @@ public class MainActivity extends AppCompatActivity {
             //Instead of implenting interface the "normal" way from NoteAdapter
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot, int position) {
-                Intent intent = new Intent(MainActivity.this,NewNoteActivity.class);
-                // String id =
-                // intent.putExtra()
-                startActivity(new Intent(MainActivity.this,NewNoteActivity.class));
+                Intent intent = new Intent(MainActivity.this, NewNoteActivity.class);
+
+                Note note = documentSnapshot.toObject(Note.class); //Creates an object of note class
+                String title = note.getTitle(); //Then uses get methods to get title and description
+                String description = note.getDescription();
+                String id = documentSnapshot.getId(); //Gets the Id of the document
+
+                intent.putExtra("noteId", id); //Puts it in extra
+                intent.putExtra("title", title);
+                intent.putExtra("description", description);
+
+                startActivity(intent); //Starts the created intent
             }
         });
     }
